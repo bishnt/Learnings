@@ -6,49 +6,78 @@ import './App.css'
 
 
 function App() {
-  const [todos, setTodos] = useState([{
-    title: "Go to gym",
-    description: "Go to gym from 7-9",
-    completed: false
-  }, {
-    title: "study physics",
-    description: "study Physics from 9-10",
-    completed: true
-  },
-  {
-    title: "study math",
-    description: "study math from 9-10",
-    completed: true
-  }]);
+  const [todos, setTodos] = useState([]);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [completed, setCompleted] = useState(false);
 
-  function addTodo(){
-    setTodos([...todos, {
-      title: "new Todo",
-      description: "desc of new todo"
-    }])
-  }
+  const handleAddTodo = () => {
+    if (!title.trim() || !description.trim()) return;
+
+    const newTodo = {
+      id: Date.now(),
+      title,
+      description,
+      completed,
+    };
+
+    setTodos([...todos, newTodo]);
+    setTitle('');
+    setDescription('');
+    setCompleted(false);
+  };
+
+  const handleToggle = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
 
   return (
-    <>
     <div>
-      <div>
-        <button onClick={addTodo}>Add a Todo</button>
-      </div>
-      {todos.map(function(todo){
-        return <Todo title = {todo.title} description = {todo.description} />
-      })}
+      <h1>Todo App</h1>
+      <input
+        type="text"
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <label>
+        <input
+          type="checkbox"
+          checked={completed}
+          onChange={(e) => setCompleted(e.target.checked)}
+        />
+        Completed
+      </label>
+      <button onClick={handleAddTodo}>Add Todo</button>
+
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <h3>{todo.title}</h3>
+            <p>{todo.description}</p>
+            <label>
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => handleToggle(todo.id)}
+              />
+              Completed
+            </label>
+          </li>
+        ))}
+      </ul>
     </div>
-
-    </>
-  )
-}
-
-
-function Todo(props) {
-  return <div>
-    <h1>{props.title}</h1>
-    <p>{props.description}</p>
-  </div>
+  );
 }
 
 export default App
